@@ -7,9 +7,8 @@ def main():
         command = input()
         if command == "exit":
             break
-        commandInput = command.split()
-        if commandInput[0] == "echo":
-            print(commandInput[1])
+        if command.startswith("echo "):
+            print(command[5:])
         else:
             print(f"{command}: command not found")
     # sys.stdout.write("$ ")
