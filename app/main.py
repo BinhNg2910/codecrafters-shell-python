@@ -35,7 +35,7 @@ def main():
                         for split_path in split_paths:
                             check_path += f"{split_path}/"
                             if os.access(check_path + joinedCommand, os.X_OK):
-                                sys.stdout.write(f"{joinedCommand} is {check_path + joinedCommand}")
+                                print(f"{joinedCommand} is {check_path + joinedCommand}")
                 else:
                     print(f"{joinedCommand}: not found")
         else:
