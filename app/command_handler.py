@@ -7,8 +7,13 @@ def parse_commandlind(command):
     current = ""
     isSingleQuote = False
     isDoubleQuote = False
+    isBackSlash = False
     for char in command:
-        if char == "'" and not isDoubleQuote: # the condition isDoubleQuote to marked if " appear in single quote, it will be treated as the normal character
+        if char == '\\' and not isBackSlash:
+            isBackSlash = not isBackSlash
+        elif isBackSlash:
+            current += char
+        elif char == "'" and not isDoubleQuote: # the condition isDoubleQuote to marked if " appear in single quote, it will be treated as the normal character
             isSingleQuote = not isSingleQuote
         elif char == '"' and not isSingleQuote:
             isDoubleQuote = not isDoubleQuote
