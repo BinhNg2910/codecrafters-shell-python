@@ -36,8 +36,8 @@ def main():
                             check_path += f"{split_path}/"
                             if os.access(check_path + joinedCommand, os.X_OK):
                                 print(f"{joinedCommand} is {check_path + joinedCommand}")
-                else:
-                    print(f"{joinedCommand}: not found")
+                                continue
+                print(f"{joinedCommand}: not found")
         else:
             print(f"{commands}: command not found")
 if __name__ == "__main__":
