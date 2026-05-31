@@ -33,4 +33,4 @@ def handle_command(command, args):
     if not command_map.get(command):
         sys.stdout.write(f"{" ".join([command] + args)}: command not found\n")
         return
-    command_map["command"](args)
+    command_map[command](args)
