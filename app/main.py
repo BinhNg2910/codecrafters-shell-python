@@ -39,6 +39,6 @@ def main():
                 if not isFound:
                     print(f"{joinedCommand}: not found")
         else:
-            print(f"{commands}: command not found")
+            print(f"{"".join(commands)}: command not found")
 if __name__ == "__main__":
     main()
