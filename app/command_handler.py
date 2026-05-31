@@ -2,14 +2,17 @@ import sys
 import os
 import subprocess
 
-def parse_singlequote_commandlind(command):
+def parse_commandlind(command):
     args = list()
     current = ""
     isSingleQuote = False
+    isDoubleQuote = False
     for char in command:
-        if char == "'":
+        if char == "'" and not isDoubleQuote: # the condition isDoubleQuote to marked if " appear in single quote, it will be treated as the normal character
             isSingleQuote = not isSingleQuote
-        elif char.isspace() and not isSingleQuote: # this condition check when the white space not in a pair of single quotes
+        elif char == '"' and not isSingleQuote:
+            isDoubleQuote = not isDoubleQuote
+        elif char.isspace() and not isSingleQuote and not isDoubleQuote: # this condition check when the white space not in a pair of single or double quotes
             if current:
                 args.append(current)
                 current = ""
