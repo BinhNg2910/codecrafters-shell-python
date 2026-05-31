@@ -20,12 +20,10 @@ def main():
         elif commands[0] == "echo":
             if len(commands) > 1:
                 handle_echo(commands[1:])
-                return
         elif commands[0] == "type":
             joinedCommand = "".join(commands[1:])
             if "".join(commands[1:]) in ["echo", "exit", "type"]:
                 print(f"{joinedCommand} is a shell builtin")
-                return
             else:
                 isFound = False
                 if path:
