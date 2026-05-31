@@ -1,4 +1,4 @@
-from command_handler import parse_commandlind, handle_command
+from app.command_handler import parse_commandlind, handle_command
 
 def main():
     while True:
