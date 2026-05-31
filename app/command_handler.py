@@ -2,8 +2,8 @@ import sys
 import os
 import subprocess
 
-def parse_commandlind(command):
-    args = []
+def parse_singlequote_commandlind(command):
+    args = list()
     current = ""
     isSingleQuote = False
     for char in command:
@@ -18,9 +18,26 @@ def parse_commandlind(command):
 
     if current:
         args.append(current)
-        
+
     return args
-        
+
+def parse_doublequote_commandline(command):
+    args = list() 
+    current = ""
+    isDoubleQuote = False
+    for c in command:
+        if c == '"':
+            isDoubleQuote = True
+        elif c.isspace() and not isDoubleQuote:
+            if current:
+                args.append(current)
+                current = ""
+        else:
+            current += c
+    
+    if current:
+        args.append(current)
+    return args
 
 def handle_echo(args):
     sys.stdout.write(" ".join(args) + "\n")
