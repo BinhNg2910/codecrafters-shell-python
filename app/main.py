@@ -1,11 +1,11 @@
-import command_handler
+from command_handler import parse_commandlind, handle_command
 
 def main():
     while True:
-        userInput = command_handler.parse_commandlind(input("$ "))
+        userInput = parse_commandlind(input("$ "))
         command = userInput[0]
         args = userInput[1:]
-        command_handler.handle_command(command, args)
+        handle_command(command, args)
     
 if __name__ == "__main__":
     main()
