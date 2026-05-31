@@ -29,7 +29,7 @@ def handle_type(args):
                     return
     sys.stdout.wirte(f"{command}: not found\n")
 
-def command_hanlder(command, args):
+def handle_command(command, args):
     if not command_map.get(command):
         sys.stdout.wirte(f"{" ".join([command] + args)}: command not found")
         return
