@@ -11,7 +11,7 @@ def handle_type(args):
     command = "".join(args)
 
     if command_map.get(command):
-        sys.stdout.write(f"{command}: is a shell builtin\n")
+        sys.stdout.write(f"{command} is a shell builtin\n")
         return
     
     path = os.environ.get("PATH")
