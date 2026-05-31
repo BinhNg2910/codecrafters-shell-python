@@ -40,7 +40,7 @@ def find_executable_file(command):
     for dir in path.split(os.pathsep):
         executable_path = os.path.join(dir, command)
         if os.path.isfile(executable_path) and os.access(executable_path, os.X_OK):
-            return executable_path
+            return command
     return None
 
 def handle_execution(command, args):
