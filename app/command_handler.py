@@ -40,13 +40,12 @@ def find_executable_file(command):
     for dir in path.split(os.pathsep):
         executable_path = os.path.join(dir, command)
         if os.path.isfile(executable_path) and os.access(executable_path, os.X_OK):
-            return command
-    return None
+            return True
+    return False
 
 def handle_execution(command, args):
-    executable_file = find_executable_file(command)
-    if executable_file:
-        subprocess.run([executable_file] + args)
+    if find_executable_file(command):
+        subprocess.run([command] + args)
         return True
         
     return False
