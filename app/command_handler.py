@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 
 def handle_echo(args):
     sys.stdout.write(" ".join(args) + "\n")
@@ -34,8 +35,28 @@ command_map = {
     "type": handle_type
 }
 
+def find_executable_file(command):
+    path = os.environ.get("PATH")
+    for dir in path.split(os.pathsep):
+        executable_path = os.path.join(dir, command)
+        if os.path.isfile(executable_path) and os.access(executable_path, os.X_OK):
+            return executable_path
+    return None
+
+def handle_execution(command, args):
+    executable_file = find_executable_file(command)
+    if executable_file:
+        subprocess.run([executable_file] + args)
+        return True
+        
+    return False
+
+    
+
 def handle_command(command, args):
-    if not command_map.get(command):
-        sys.stdout.write(f"{" ".join([command] + args)}: command not found\n")
+    if command_map.get(command):
+        command_map[command](args)
         return
-    command_map[command](args)
+    if handle_execution(command, args):
+        return
+    sys.stdout.write(f"{" ".join([command] + args)}: command not found\n")
