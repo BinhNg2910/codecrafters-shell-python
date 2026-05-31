@@ -1,11 +1,10 @@
 import app.command_handler
 
-
 def main():
     while True:
-        user_input = input("$ ")
-        command = user_input.split(" ")[0]
-        args = user_input.split(" ")[1:]
+        userInput = input("$ ")
+        command = userInput.split(" ")[0]
+        args = userInput.split(" ")[1:]
         app.command_handler.handle_command(command, args)
     
 if __name__ == "__main__":
