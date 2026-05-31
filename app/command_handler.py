@@ -2,6 +2,26 @@ import sys
 import os
 import subprocess
 
+def parse_commandlind(command):
+    args = []
+    current = ""
+    isSingleQuote = False
+    for char in command:
+        if char == "'":
+            isSingleQuote = not isSingleQuote
+        elif char.isspace() and not isSingleQuote: # this condition check when the white space not in a pair of single quotes
+            if current:
+                args.append(current)
+                current = ""
+        else:
+            current += char
+
+    if current:
+        args.append(current)
+        
+    return args
+        
+
 def handle_echo(args):
     sys.stdout.write(" ".join(args) + "\n")
 
