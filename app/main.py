@@ -1,26 +1,45 @@
 import sys
+import os
 
+def handle_echo(args):
+    print(" ".join(args))
+
+def handle_exit():
+    sys.exit()
 
 def main():
     while True:
         sys.stdout.write("$ ")
-        command = input()
-        if command == "exit":
-            break
-        if command.startswith("echo "):
-            print(command[5:])
-        elif command.startswith("type "):
-            if command[5:] in ["echo", "exit", "type"]:
-                print(f"{command[5:]} is a shell builtin")
+        commands = input().split()
+
+        path = os.environ.get("PATH")
+        delimeter = os.pathsep
+
+        if commands[0] == "exit":
+            handle_exit()
+        elif commands[0] == "echo":
+            if len(commands) > 1:
+                handle_echo(commands[1:])
+                return
+        elif commands[0] == "type":
+            joinedCommand = "".join(commands[1:])
+            if "".join(commands[1:]) in ["echo", "exit", "type"]:
+                print(f"{joinedCommand} is a shell builtin")
+                return
             else:
-                print(f"{command[5:]}: not found")
+                if path:
+                    seperated_paths = path.split(delimeter)
+                    for path in seperated_paths:
+                        split_paths = path.split("/")
+                        check_path = ""
+                        for split_path in split_paths:
+                            check_path += f"{split_path}/"
+                            if os.access(check_path + joinedCommand, os.X_OK):
+                                sys.stdout.write(f"{joinedCommand} is {check_path + joinedCommand}")
+                                return
+                print(f"{joinedCommand}: not found")
+                return
         else:
-            print(f"{command}: command not found")
-    # sys.stdout.write("$ ")
-    # command = input()
-    # print(f'{command}: command not found')
-
-
-
+            print(f"{commands}: command not found")
 if __name__ == "__main__":
     main()
