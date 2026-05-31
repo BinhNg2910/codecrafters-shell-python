@@ -27,7 +27,7 @@ def parse_doublequote_commandline(command):
     isDoubleQuote = False
     for c in command:
         if c == '"':
-            isDoubleQuote = True
+            isDoubleQuote = not isDoubleQuote
         elif c.isspace() and not isDoubleQuote:
             if current:
                 args.append(current)
