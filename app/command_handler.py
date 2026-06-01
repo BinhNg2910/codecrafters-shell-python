@@ -9,7 +9,7 @@ def parse_commandlind(command):
     isDoubleQuote = False
     isBackSlash = False
     for char in command:
-        if char == '\\' and not isBackSlash:
+        if char == '\\' and not isBackSlash and not isSingleQuote:
             isBackSlash = not isBackSlash
         elif isBackSlash:
             current += char
