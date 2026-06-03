@@ -30,26 +30,8 @@ def parse_commandlind(command):
 
     return args
 
-def parse_doublequote_commandline(command):
-    args = list() 
-    current = ""
-    isDoubleQuote = False
-    for c in command:
-        if c == '"':
-            isDoubleQuote = not isDoubleQuote
-        elif c.isspace() and not isDoubleQuote:
-            if current:
-                args.append(current)
-                current = ""
-        else:
-            current += c
-    
-    if current:
-        args.append(current)
-    return args
-
-def handle_echo(args):
-    sys.stdout.write(" ".join(args) + "\n")
+def handle_echo(args, stdout=sys.stdout): # default value for stdout is terminal write
+    stdout.write(" ".join(args) + "\n")
 
 def handle_exit(_):
     sys.exit()
@@ -89,16 +71,29 @@ def find_executable_file(command):
             return True
     return False
 
-def handle_execution(command, args):
+def handle_execution(command, args, stdout=None):
     if find_executable_file(command):
-        subprocess.run([command] + args)
+        subprocess.run([command] + args, stdout=stdout)
         return True
         
     return False
 
+def redirection_detect_and_extract(args):
+    for idx, arg in enumerate(args):
+        if arg in [">", "1>"]:
+            command_arg = args[:idx]
+            output_file = args[idx+1:]
+            return [command_arg, output_file]
+    return [args, None]
     
-
 def handle_command(command, args):
+    args, stdout_file = redirection_detect_and_extract(args)
+    if stdout_file:
+        if command_map.get(command):
+            command_map[command](args)
+            return
+        
+        return
     if command_map.get(command):
         command_map[command](args)
         return
