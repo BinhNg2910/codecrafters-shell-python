@@ -81,7 +81,7 @@ def redirection_detect_and_extract(args):
     for idx, arg in enumerate(args):
         if arg in [">", "1>"]:
             command_arg = args[:idx]
-            output_file = args[idx+1:]
+            output_file = args[idx+1]
             return [command_arg, output_file]
     return [args, None]
     
