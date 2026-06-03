@@ -75,7 +75,6 @@ def handle_execution(command, args, stdout=None):
     if find_executable_file(command):
         subprocess.run([command] + args, stdout=stdout)
         return True
-        
     return False
 
 def redirection_detect_and_extract(args):
@@ -89,14 +88,16 @@ def redirection_detect_and_extract(args):
 def handle_command(command, args):
     args, stdout_file = redirection_detect_and_extract(args)
     if stdout_file:
+        with open(stdout_file, "w") as file:
+            if command_map.get(command):
+                command_map[command](args, stdout=file)
+                return
+            if handle_execution(command, args, stdout=file):
+                return
+    else:
         if command_map.get(command):
             command_map[command](args)
             return
-        
-        return
-    if command_map.get(command):
-        command_map[command](args)
-        return
-    if handle_execution(command, args):
-        return
+        if handle_execution(command, args):
+            return
     sys.stdout.write(f"{" ".join([command] + args)}: command not found\n")
