@@ -117,7 +117,7 @@ def handle_command(command, args):
             else None
         )
         if command_map.get(command):
-            command_map[command](args, stdout=output)
+            command_map[command](args)
             return
         if handle_execution(command, args, stdout=stdout, stderr=stderr):
             return
