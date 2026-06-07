@@ -90,7 +90,9 @@ def redirection_detect_and_extract(args):
     idx = 0
     while idx < len(args):
         arg = args[idx]
+        sys.stdout.write("Checking before write\n")
         if arg in [">", "1>"]:
+            sys.stdout.write("Check\n")
             outputFile = args[idx+1]
             idx += 2
         elif arg in ["2>"]:
