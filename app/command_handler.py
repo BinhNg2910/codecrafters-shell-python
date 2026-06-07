@@ -1,8 +1,10 @@
 import sys
 import os
 import subprocess
+from contextlib import ExitStack
 
 def parse_commandlind(command):
+    """Split a command line while preserving quoted and escaped characters."""
     args = list()
     current = ""
     isSingleQuote = False
@@ -14,11 +16,13 @@ def parse_commandlind(command):
         elif isBackSlash:
             current += char
             isBackSlash = not isBackSlash
-        elif char == "'" and not isDoubleQuote: # the condition isDoubleQuote to marked if " appear in single quote, it will be treated as the normal character
+        # A quote is special only when it is not inside the other quote type.
+        elif char == "'" and not isDoubleQuote:
             isSingleQuote = not isSingleQuote
         elif char == '"' and not isSingleQuote:
             isDoubleQuote = not isDoubleQuote
-        elif char.isspace() and not isSingleQuote and not isDoubleQuote: # this condition check when the white space not in a pair of single or double quotes
+        # Whitespace separates arguments only when it is outside quotes.
+        elif char.isspace() and not isSingleQuote and not isDoubleQuote:
             if current:
                 args.append(current)
                 current = ""
@@ -30,7 +34,8 @@ def parse_commandlind(command):
 
     return args
 
-def handle_echo(args, stdout=sys.stdout): # default value for stdout is terminal write
+def handle_echo(args, stdout=sys.stdout):
+    """Write echo arguments to the selected output stream."""
     stdout.write(" ".join(args) + "\n")
 
 def handle_exit(_):
@@ -64,6 +69,7 @@ command_map = {
 }
 
 def find_executable_file(command):
+    """Return whether an executable command can be found in PATH."""
     path = os.environ.get("PATH")
     for dir in path.split(os.pathsep):
         executable_path = os.path.join(dir, command)
@@ -71,33 +77,49 @@ def find_executable_file(command):
             return True
     return False
 
-def handle_execution(command, args, stdout=None):
+def handle_execution(command, args, stdout=None, stderr=None):
+    """Run an external command with optional output and error redirection."""
     if find_executable_file(command):
-        subprocess.run([command] + args, stdout=stdout)
+        subprocess.run([command] + args, stdout=stdout, stderr=stderr)
         return True
     return False
 
 def redirection_detect_and_extract(args):
-    for idx, arg in enumerate(args):
+    """Separate command arguments from stdout and stderr redirect targets."""
+    commandArg, outputFile, outputErrFile = args, None, None
+    idx = 0
+    while idx < len(args):
+        arg = args[idx]
         if arg in [">", "1>"]:
-            command_arg = args[:idx]
-            output_file = args[idx+1]
-            return [command_arg, output_file]
-    return [args, None]
+            outputFile = args[idx+1]
+            idx += 2
+        elif arg in ["2>"]:
+            outputErrFile = args[idx+1]
+            idx += 2
+        else:
+            commandArg.append(arg)
+    return [commandArg, outputFile, outputErrFile]
     
 def handle_command(command, args):
-    args, stdout_file = redirection_detect_and_extract(args)
-    if stdout_file:
-        with open(stdout_file, "w") as file:
-            if command_map.get(command):
-                command_map[command](args, stdout=file)
-                return
-            if handle_execution(command, args, stdout=file):
-                return
-    else:
+    """Dispatch a builtin or external command using any requested redirects."""
+    args, stdout_file, stderr_file = redirection_detect_and_extract(args)
+    # ExitStack closes whichever redirect files were opened when this block ends.
+    with ExitStack() as stack:
+        stdout = (
+            stack.enter_context(open(stdout_file, "w"))
+            if stdout_file
+            else None
+        )
+        stderr = (
+            stack.enter_context(open(stderr_file, "w"))
+            if stderr_file
+            else None
+        )
         if command_map.get(command):
-            command_map[command](args)
+            output = stdout if stdout is not None else sys.stdout
+            command_map[command](args, stdout=output)
             return
-        if handle_execution(command, args):
+        if handle_execution(command, args, stdout=stdout, stderr=stderr):
             return
+        
     sys.stdout.write(f"{" ".join([command] + args)}: command not found\n")
