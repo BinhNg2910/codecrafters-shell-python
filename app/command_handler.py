@@ -98,6 +98,7 @@ def redirection_detect_and_extract(args):
             idx += 2
         else:
             commandArg.append(arg)
+            idx += 1
     return [commandArg, outputFile, outputErrFile]
     
 def handle_command(command, args):
