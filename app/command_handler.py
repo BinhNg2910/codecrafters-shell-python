@@ -38,14 +38,14 @@ def handle_echo(args, stdout=sys.stdout):
     """Write echo arguments to the selected output stream."""
     stdout.write(" ".join(args) + "\n")
 
-def handle_exit(_):
+def handle_exit(_, stdout=sys.stdout):
     sys.exit()
 
-def handle_type(args):
+def handle_type(args, stdout=sys.stdout):
     command = "".join(args)
 
     if command_map.get(command):
-        sys.stdout.write(f"{command} is a shell builtin\n")
+        stdout.write(f"{command} is a shell builtin\n")
         return
     
     path = os.environ.get("PATH")
@@ -58,9 +58,9 @@ def handle_type(args):
             for splitPath in splitPaths:
                 check += f"{splitPath}/"
                 if os.access(check + command, os.X_OK):
-                    sys.stdout.write(f"{command} is {check + command}\n")
+                    stdout.write(f"{command} is {check + command}\n")
                     return
-    sys.stdout.write(f"{command}: not found\n")
+    stdout.write(f"{command}: not found\n")
 
 command_map = {
     "echo": handle_echo,
@@ -90,9 +90,7 @@ def redirection_detect_and_extract(args):
     idx = 0
     while idx < len(args):
         arg = args[idx]
-        sys.stdout.write("Checking before write\n")
         if arg in [">", "1>"]:
-            sys.stdout.write("Check\n")
             outputFile = args[idx+1]
             idx += 2
         elif arg in ["2>"]:
@@ -119,7 +117,8 @@ def handle_command(command, args):
             else None
         )
         if command_map.get(command):
-            command_map[command](args)
+            output = stdout if stdout is not None else sys.stdout
+            command_map[command](args, output)
             return
         if handle_execution(command, args, stdout=stdout, stderr=stderr):
             return
