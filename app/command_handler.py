@@ -117,7 +117,6 @@ def handle_command(command, args):
             else None
         )
         if command_map.get(command):
-            output = stdout if stdout is not None else sys.stdout
             command_map[command](args, stdout=output)
             return
         if handle_execution(command, args, stdout=stdout, stderr=stderr):
