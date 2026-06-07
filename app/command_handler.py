@@ -86,7 +86,7 @@ def handle_execution(command, args, stdout=None, stderr=None):
 
 def redirection_detect_and_extract(args):
     """Separate command arguments from stdout and stderr redirect targets."""
-    commandArg, outputFile, outputErrFile = args, None, None
+    commandArg, outputFile, outputErrFile = [], None, None
     idx = 0
     while idx < len(args):
         arg = args[idx]
