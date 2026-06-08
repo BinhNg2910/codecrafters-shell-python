@@ -86,28 +86,31 @@ def handle_execution(command, args, stdout=None, stderr=None):
 
 def redirection_detect_and_extract(args):
     """Separate command arguments from stdout and stderr redirect targets."""
-    commandArg, outputFile, outputErrFile = [], None, None
+    commandArg, outputFile, outputErrFile, outputMode = [], None, None, "w"
     idx = 0
     while idx < len(args):
         arg = args[idx]
         if arg in [">", "1>"]:
             outputFile = args[idx+1]
             idx += 2
-        elif arg in ["2>"]:
+        elif arg == ">>":
+            outputFile = args[idx+1]
+            outputMode = "a"
+        elif arg == "2>":
             outputErrFile = args[idx+1]
             idx += 2
         else:
             commandArg.append(arg)
             idx += 1
-    return [commandArg, outputFile, outputErrFile]
+    return [commandArg, outputFile, outputErrFile, outputMode]
     
 def handle_command(command, args):
     """Dispatch a builtin or external command using any requested redirects."""
-    args, stdout_file, stderr_file = redirection_detect_and_extract(args)
+    args, stdout_file, stderr_file, stdout_mode = redirection_detect_and_extract(args)
     # ExitStack closes whichever redirect files were opened when this block ends.
     with ExitStack() as stack:
         stdout = (
-            stack.enter_context(open(stdout_file, "w"))
+            stack.enter_context(open(stdout_file, stdout_mode))
             if stdout_file
             else None
         )
