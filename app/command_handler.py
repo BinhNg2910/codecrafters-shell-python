@@ -96,6 +96,7 @@ def redirection_detect_and_extract(args):
         elif arg == ">>":
             outputFile = args[idx+1]
             outputMode = "a"
+            idx += 2
         elif arg == "2>":
             outputErrFile = args[idx+1]
             idx += 2
