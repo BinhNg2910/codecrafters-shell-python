@@ -93,7 +93,7 @@ def redirection_detect_and_extract(args):
         if arg in [">", "1>"]:
             outputFile = args[idx+1]
             idx += 2
-        elif arg == ">>":
+        elif arg in [">>", "1>>"]:
             outputFile = args[idx+1]
             outputMode = "a"
             idx += 2
