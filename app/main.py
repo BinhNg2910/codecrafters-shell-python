@@ -1,6 +1,21 @@
 from app.command_handler import parse_commandlind, handle_command
+import readline
+
+BUILD_INS = ["echo", "exit"]
+
+def completer(text, state):
+    for command in BUILD_INS:
+        matches = []
+        if command.startswith(text):
+            matches.append(command + " ")
+    
+    if state < len(BUILD_INS):
+        return matches[state]
+    return None
 
 def main():
+    readline.set_completer(completer)
+    readline.parse_and_bind("tab: complete")
     while True:
         userInput = parse_commandlind(input("$ "))
         if not userInput:
