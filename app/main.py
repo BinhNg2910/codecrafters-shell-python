@@ -4,8 +4,8 @@ import readline
 BUILD_INS = ["echo", "exit"]
 
 def completer(text, state):
+    matches = []
     for command in BUILD_INS:
-        matches = []
         if command.startswith(text):
             matches.append(command + " ")
     
