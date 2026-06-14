@@ -43,9 +43,8 @@ def find_filename_matches(text):
     return matches
 
 def completer(text, state):
-    is_argument = bool(readline.get_begidx(text))
-    if is_argument:
-        matches = find_command_matches()
+    is_argument = readline.get_begidx() > 0
+    matches = find_filename_matches if is_argument else find_command_matches
     return matches[state] if state < len(matches) else None
 
 
