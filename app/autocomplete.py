@@ -39,7 +39,7 @@ def find_filename_matches(text):
     matches = []
     for entry in entries:
         if entry.startswith(text):
-            matches.append(text + " ")
+            matches.append(entry + " ")
     return matches
 
 def completer(text, state):
