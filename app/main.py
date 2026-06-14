@@ -9,7 +9,7 @@ def completer(text, state):
         if command.startswith(text):
             matches.append(command + " ")
     
-    if state < len(BUILD_INS):
+    if state < len(matches):
         return matches[state]
     return None
 
